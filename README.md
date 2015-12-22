@@ -7,9 +7,12 @@ virtualenvs and can autocomplete package names from PyPi *fast*.
 
 ## Installation
 
+Requires [`pip-cache`](https://github.com/brunobeltran/pip-cache) be installed:
+
+    $ pip install pip-cache
+
 Global:
 
-    $ sudo pip install pip-cache
     $ git clone git://github.com/brunobeltran/pip-bash-completion.git
     $ sudo cp ./pip-bash-completion/pip /etc/bash_completion.d/
     $ . /etc/bash_completion.d/pip
@@ -17,7 +20,6 @@ Global:
 
 Local:
 
-    $ pip install pip-cache
     $ mkdir ~/bash_completion.d
     $ cp ./pip-bash-completion/pip ~/bash_completion.d/
     $ echo "" >> ~/.bashrc
@@ -45,14 +47,23 @@ To complete command:
 To list pip's options for commands:
 
     $ pip install -[TAB][TAB]
-    -b                     --download-cache=      -f                     -I                     --mirrors=             --pypi-url=            --source-directory=    --user
-    --build=               --download-dir=        --find-links           --ignore-installed     --no-dependencies      -q                     --src=                 -v
-    --build-dir=           --download-directory=  --find-links=          --index-url            --no-deps              --quiet                -t                     --verbose
-    --build-directory=     -e                     --force-reinstall      --index-url=           --no-download          -r                     --target=              --version
-    -c                     --editable             --global-option=       --install-             --no-index             --requirement=         --timeout=
-    -d                     --editable=            -h                     --install-option=      --no-install           -s                     -U
-    --default-timeout=     --exists-action=       --help                 --log=                 -p                     --source=              --upgrade
-    --download=            --extra-index-url=     -i                     -M                     --proxy=               --source-dir=          --use-mirrors
+    --allow-all-external         --egg                        --no-binary                  --root
+    --allow-external             --exists-action              --no-cache-dir               --src
+    --allow-unverified           --extra-index-url            --no-clean                   -t
+    -b                           -f                           --no-compile                 --target
+    --build                      --find-links                 --no-deps                    --timeout
+    -c                           --force-reinstall            --no-index                   --trusted-host
+    --cache-dir                  --global-option              --no-use-wheel               -U
+    --cert                       -h                           --only-binary                --upgrade
+    --client-cert                --help                       --pre                        --user
+    --compile                    -i                           --process-dependency-links   -v
+    --constraint                 -I                           --proxy                      -V
+    -d                           --ignore-installed           -q,                          --verbose
+    --disable-pip-version-check  --index-url                  --quiet                      --version
+    --download                   --install-option             -r
+    -e                           --isolated                   --requirement
+    --editable                   --log                        --retries
+
 
 To dynamically query available packages (example from my system, your output
 will depend on what packages you have installed):
