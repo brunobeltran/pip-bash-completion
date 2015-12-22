@@ -2,12 +2,12 @@ Pip Bash Completion
 ===================
 
 Bash autocompletion for [pip](https://github.com/pypa/pip). Understands
-virtualenvs and can autocomplete package names from PyPi *fast*.
+virtualenvs and can autocomplete package names from PyPI *fast*.
 
 
 ## Installation
 
-Requires [`pip-cache`](https://github.com/brunobeltran/pip-cache) be installed:
+Requires that [`pip-cache`](https://github.com/brunobeltran/pip-cache) be installed:
 
     $ pip install pip-cache
 
@@ -31,6 +31,12 @@ Local:
 
 ## Usage
 
+(Optionally) update your local index of PyPI *a la* `apt-get update` via
+`pip-cache` (does NOT require root):
+
+    $ pip-cache update
+    Connecting to PyPi...downloading package names...done!
+    Writing packages to cache...done!
 
 To list pip's commands:
 
@@ -81,4 +87,4 @@ or
 
 ## Links
 
-A good autocompleter for `pip` that can't autocomplete package names and is significantly slower but does not require an external python package to be installed can be found [here](https://github.com/ekalinin/pip-bash-completion).
+Another good autocompleter for `pip` that can't autocomplete package names and is significantly slower but does not require that an external python package be installed can be found [here](https://github.com/ekalinin/pip-bash-completion).
