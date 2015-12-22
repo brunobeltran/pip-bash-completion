@@ -1,0 +1,189 @@
+
+_pip() {
+    local cur prev words cword
+    _init_completion || return
+
+    local oldglob=$(shopt -p extglob)
+    echo "saving oldglob: $oldglob" >>/home/bbeltr1/tmp/complog.log
+    shopt -s extglob
+
+    # pip subcommands
+    local commands='install uninstall freeze list show search wheel help'
+    # all possible options (grouped by pip subcommand if applicable)
+    # further separated manually if they take file, directory,
+    # package, or incompleteable arguments
+    local general_options='-h --help --isolated -v --verbose -V --version -q, --quiet --log --proxy --retries --timeout --exists-action --trusted-host --cert --client-cert --cache-dir --no-cache-dir --disable-pip-version-check'
+    local general_options_file_arg='--log --cert --client-cert'
+    local general_options_dir_arg='--cache-dir'
+    # proxy takes ssh style port address, trusted-host takes a hostname, others take ints
+    local general_options_incompleteable_arg='--proxy --retries --timeout --hostname'
+    local general_options_package_arg=''
+    local package_index_options='-i --index-url --extra-index-url --no-index -f --find-links --allow-external --allow-all-external --allow-unverified --process-dependency-links'
+    local package_index_file_arg=''
+    local package_index_dir_arg=''
+    # all take URLs
+    local package_index_incompleteable_arg='-i --index-url --extra-index-url'
+    local package_index_package_arg='--allow-external --allow-unverified'
+    local install_options='-c --constraint -e --editable -r --requirement -b --build -t --target -d --download --src <dir> -U --upgrade --force-reinstall -I --ignore-installed --no-deps --install-option --global-option --user --egg --root --compile --no-compile --no-use-wheel --no-binary --only-binary --pre --no-clean'
+    local install_file_arg='-c --constraint -e --editable -r --requirement'
+    local install_dir_arg='-b --build -t --target -d --download --src'
+    # *-option take options for setup.py, *-binary take a comma-separated
+    # list of packages or ":all:" or ":none:"
+    local install_incompleteable_arg='--install-option --global-option'
+    local install_package_arg=''
+    local uninstall_options='-r --requirement -y --yes'
+    local uninstall_file_arg='-r --requirement'
+    local uninstall_dir_arg=''
+    local uninstall_incompleteable_arg=''
+    local uninstall_package_arg=''
+    local freeze_options='-r --requirement -f --find-links -l --local --user'
+    local freeze_file_arg='-r --requirement'
+    local freeze_dir_arg=''
+    # -f takes URL
+    local freeze_incompleteable_arg='-f --find-links'
+    local freeze_package_arg=''
+    local list_options='-o --outdate -u --uptodate -e --editable -l --local --user --pre'
+    local list_file_arg=''
+    local list_dir_arg=''
+    local list_incompleteable_arg=''
+    local list_package_arg=''
+    local show_options='-f --files'
+    local show_file_arg=''
+    local show_dir_arg=''
+    local show_incompleteable_arg=''
+    local show_package_arg=''
+    local search_options='--index'
+    local search_file_arg=''
+    local search_dir_arg=''
+    # --index takes a URL
+    local search_incompleteable_arg='--index'
+    local search_package_arg=''
+    local wheel_options='-w --wheel-dir --no-use-wheel --no-binary --only-binary --build-option -c --constraint -e --editable -r --requirement --src --no-deps -b, --build --global-option --pre --no-clean'
+    local wheel_file_arg='-c --constraint -e --editable'
+    local wheel_dir_arg='-w --wheel-dir --src -b --build'
+    # *-option take options for setup.py, *-binary take a comma-separated
+    # list of packages or ":all:" or ":none:"
+    local wheel_incompleteable_arg='--build-option --global-option --no-binary --only-binary'
+    local wheel_package_arg=''
+
+    local special i
+    # first check if we have typed any of the commands yet
+    for (( i=0; i < ${#words[@]}-1; i++ )); do
+        if [[ ${words[i]} == @(install|uninstall|freeze|list|show|search|wheel|help) ]]; then
+            special=${words[i]}
+        fi
+    done
+    # now assemble all applicable options
+    local options_options="${general_options}"
+    local options_file_arg="${general_options_file_arg}"
+    local options_dir_arg="${general_options_dir_arg}"
+    local options_incompleteable_arg="${general_options_incompleteable_arg}"
+    local options_package_arg="${general_options_package_arg}"
+    if [[ -n $special ]]; then
+        case $special in
+            install|wheel|list)
+                [[ -n ${package_index_options} ]] && options_options="${package_index_options} ${options_options}"
+                [[ -n ${package_index_file_arg} ]] && options_file_arg="${package_index_file_arg} ${options_file_arg}"
+                [[ -n ${package_index_dir_arg} ]] && options_dir_arg="${package_index_dir_arg} ${options_dir_arg}"
+                [[ -n ${package_index_incompleteable_arg} ]] && options_incompleteable_arg="${package_index_incompleteable_arg} ${options_incompleteable_arg}"
+                [[ -n ${package_index_package_arg} ]] && options_package_arg="${package_index_package_arg} ${options_package_arg}"
+                ;;
+        esac
+        for word in install uninstall freeze list show search wheel; do
+            for suffix in _options _file_arg _dir_arg _incompleteable_arg _package_arg; do
+                if [[ $special == $word ]]; then
+                    aggregator_name="options${suffix}"
+                    current_name="${word}${suffix}"
+                    [[ -n ${!current_name} ]] && printf -v "${aggregator_name}" -- "${!current_name} ${!aggregator_name}"
+                fi
+            done
+        done
+    fi
+    for word in do_loop_once; do
+    options_file_arg="+(${options_file_arg// /|})"
+    options_dir_arg="+(${options_dir_arg// /|})"
+    options_incompleteable_arg="+(${options_incompleteable_arg// /|})"
+    options_package_arg="+(${options_package_arg// /|})"
+    case "$prev" in
+        # file arguments
+        $options_file_arg)
+            echo "$prev MATCH file arg from list: ${options_file_arg}" >>/home/bbeltr1/tmp/complog.log
+            _filedir
+            break
+            ;;
+        # directory-only arguments
+        $options_dir_arg)
+            echo "$prev MATCH dir arg from list: ${options_dir_arg}" >>/home/bbeltr1/tmp/complog.log
+            _filedir -d
+            break
+            ;;
+        # arguments that we don't know how to complete
+        $options_incompleteable_arg)
+            echo "$prev MATCH inc arg from list: ${options_incompleteable_arg}" >>/home/bbeltr1/tmp/complog.log
+            COMPREPLY=''
+            break
+            ;;
+        # or an argument that should look like a package
+        $options_package_arg)
+            echo "$prev MATCH package arg from list: ${options_package_arg}" >>/home/bbeltr1/tmp/complog.log
+            COMPREPLY=( $( pip-cache pkgnames "$cur" 2>/dev/null ) )
+            break
+            ;;
+        # that one special option which has its own arguments
+        --exists-action)
+            COMPREPLY=( $( compgen -W 'switch ignore wipe backup' -- "$cur" ) )
+            break
+            ;;
+        *)
+            echo "NO MATCH for $prev in lists:" >>/home/bbeltr1/tmp/complog.log
+            echo "${options_file_arg}" >>/home/bbeltr1/tmp/complog.log
+            echo "${options_dir_arg}" >>/home/bbeltr1/tmp/complog.log
+            echo "${options_incompleteable_arg}" >>/home/bbeltr1/tmp/complog.log
+            echo "${options_package_arg}" >>/home/bbeltr1/tmp/complog.log
+            ;;
+
+    esac
+    # otherwise, we're typing an option, command, or target for a command
+    # if we are typing an option, complete from the list of valid options
+    if [[ "${cur}" == -* ]]; then
+        COMPREPLY=( $( compgen -W "${options_options}" -- "$cur" ) )
+        break
+    fi
+    # now we're not typing an argument and the previous option doesn't take an
+    # argument. if we've already entered a command complete from a list of valid
+    # targets of that command
+    if [[ -n $special ]]; then
+        case $special in
+            uninstall|show)
+                COMPREPLY=( $( pip list | awk '{print $1}' | grep "^$cur") )
+                break
+                ;;
+            install|search)
+                COMPREPLY=( $( pip-cache pkgnames "$cur" 2>/dev/null ) )
+                break
+                ;;
+            wheel)
+                _filedir
+                break
+                ;;
+            help)
+                COMPREPLY=( $( compgen -W "${commands}" -- "$cur" ) )
+                break
+        esac
+    # otherwise the only other thing we could want to do is input the initial
+    # command itself
+    else
+        COMPREPLY=( $( compgen -W "${commands}" -- "$cur" ) )
+        break
+    fi
+    done
+    echo "eval'ing: $oldglob" >>/home/bbeltr1/tmp/complog.log
+    eval "$oldglob"
+    return 0
+} &&
+complete -o default -F _pip pip
+complete -o default -F _pip pip2
+complete -o default -F _pip pip3
+
+
+# /* vim: set filetype=sh : */
