@@ -3,8 +3,9 @@ _pip() {
     local cur prev words cword
     _init_completion || return
 
+    # mkdir -p "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/
     local oldglob=$(shopt -p extglob)
-    echo "saving oldglob: $oldglob" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+    # echo "saving oldglob: $oldglob" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
     shopt -s extglob
 
     # pip subcommands
@@ -107,25 +108,25 @@ _pip() {
     case "$prev" in
         # file arguments
         $options_file_arg)
-            echo "$prev MATCH file arg from list: ${options_file_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "$prev MATCH file arg from list: ${options_file_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
             _filedir
             break
             ;;
         # directory-only arguments
         $options_dir_arg)
-            echo "$prev MATCH dir arg from list: ${options_dir_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "$prev MATCH dir arg from list: ${options_dir_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
             _filedir -d
             break
             ;;
         # arguments that we don't know how to complete
         $options_incompleteable_arg)
-            echo "$prev MATCH inc arg from list: ${options_incompleteable_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "$prev MATCH inc arg from list: ${options_incompleteable_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
             COMPREPLY=''
             break
             ;;
         # or an argument that should look like a package
         $options_package_arg)
-            echo "$prev MATCH package arg from list: ${options_package_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "$prev MATCH package arg from list: ${options_package_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
             COMPREPLY=( $( pip-cache pkgnames "$cur" 2>/dev/null ) )
             break
             ;;
@@ -135,11 +136,11 @@ _pip() {
             break
             ;;
         *)
-            echo "NO MATCH for $prev in lists:" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
-            echo "${options_file_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
-            echo "${options_dir_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
-            echo "${options_incompleteable_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
-            echo "${options_package_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "NO MATCH for $prev in lists:" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "${options_file_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "${options_dir_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "${options_incompleteable_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+            # echo "${options_package_arg}" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
             ;;
 
     esac
@@ -177,7 +178,7 @@ _pip() {
         break
     fi
     done
-    echo "eval'ing: $oldglob" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
+    # echo "eval'ing: $oldglob" >> "${XDG_CACHE_HOME:-${HOME}/.cache}"/pip-completion/comp.log
     eval "$oldglob"
     return 0
 } &&
