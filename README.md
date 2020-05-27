@@ -20,13 +20,15 @@ Global:
 
 Local:
 
-    $ mkdir ~/bash_completion.d
-    $ cp ./pip-bash-completion/pip ~/bash_completion.d/
-    $ echo "" >> ~/.bashrc
-    $ echo 'if [ -f "$HOME/bash_completion.d/pip" ] ; then' >> ~/.bashrc
-    $ echo '    . $HOME/bash_completion.d/pip' >> ~/.bashrc
-    $ echo "fi" >> ~/.bashrc
-    $ . ~/bash_completion.d/pip
+    $ mkdir ~/.bash_completion.d
+    $ cp ./pip-bash-completion/pip ~/.bash_completion.d/
+    $ cat >> ~/.bashrc << EOM
+    >
+    > if [ -f ~/.bash_completion.d/pip ] ; then
+    >     . ~/.bash_completion.d/pip
+    > fi
+    > EOM
+    $ . ~/.bash_completion.d/pip
 
 
 ## Usage
